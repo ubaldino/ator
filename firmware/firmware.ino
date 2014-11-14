@@ -23,10 +23,9 @@
 // acel3 =  
 
 //pines analogicos
-const int xPin = 0;
-const int yPin = 1;
-const int zPin = 2;
-
+int xM1Read, xM2Read, xM3Read;
+int xM1Ang , xM2Ang , xM3Ang;
+int xm1Lin = 0;
 //3v  265-402
 //5v  316-481
 
@@ -79,6 +78,9 @@ void setup() {
 	pinMode(13, 1);
 	digitalWrite(13, 1);
 
+	// Acelerometros
+
+
 
 }
 
@@ -99,7 +101,7 @@ void loop() {
 	        	parar( 30 , 31 );
 				digitalWrite( 30 , 1 );
 				digitalWrite( 31 , 0 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        case 115:
 	        	parar( 30 , 31 );
@@ -108,7 +110,7 @@ void loop() {
 	        	parar( 30 , 31 );
 				digitalWrite( 30 , 0 );
 				digitalWrite( 31 , 1 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        /*
 	        	m2
@@ -121,7 +123,7 @@ void loop() {
 	        	parar( 32 , 33 );
 				digitalWrite( 32 , 1 );
 				digitalWrite( 33 , 0 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        case 119:
 	        	parar( 32 , 33 );
@@ -130,7 +132,7 @@ void loop() {
 	        	parar( 32 , 33 );
 				digitalWrite( 32 , 0 );
 				digitalWrite( 33 , 1 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        /*
 	        	m3
@@ -143,7 +145,7 @@ void loop() {
 	        	parar( 34 , 35 );
 				digitalWrite( 34 , 1 );
 				digitalWrite( 35 , 0 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        case 120:
 	        	parar( 34 , 35 );
@@ -152,7 +154,7 @@ void loop() {
 	        	parar( 34 , 35 );
 				digitalWrite( 34 , 0 );
 				digitalWrite( 35 , 1 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        /*
 	        	m4
@@ -165,7 +167,7 @@ void loop() {
 	        	parar( 36 , 37 );
 				digitalWrite( 36 , 1 );
 				digitalWrite( 37 , 0 );
-				delay( 200 );
+				delay( 10 );
 	          break;
 	        case 111:
 	        	parar( 36 , 37 );
@@ -174,28 +176,65 @@ void loop() {
 	        	parar( 36 , 37 );
 				digitalWrite( 36 , 0 );
 				digitalWrite( 37 , 1 );
-				delay( 200 );
+				delay( 10 );
 	          break;
+	          /*
+	        	m5
+				k = 107
+				l = 108
+				ñ = 164
 				// m5 = 6, 38 - 39
+	        */ 
+	        case 107:
+	        	parar( 38 , 39 );
+				digitalWrite( 38 , 1 );
+				digitalWrite( 39 , 0 );
+				delay( 10 );
+	          break;
+	        case 108:
+	        	parar( 38 , 39 );
+	          break;
+	        case 164:
+	        	parar( 38 , 39 );
+				digitalWrite( 38 , 0 );
+				digitalWrite( 39 , 1 );
+				delay( 10 );
+	          break;
+	          
 				// m6 = 7, 40 - 41
 	    }
 
 	}
 
-	int xRead = analogRead(A0);
-	delay(1);
+		delay(1);
 	//3v  265-402
 	//5v  316-481
+	
+	/*
+	if( xm1Lin > 0 || xm1Lin > 6 ){
+	    xm1Lin = xRead;
+	}
+	*/
 
-	int xAng = map(xRead, 265, 402, -90, 90);
-	Serial.println( xAng );
+	//5v   268 407
 
+	leerAcelerometros();
+	Serial.println( );
+	Serial.print( "Angulo M1: " );
+	Serial.println( xM1Ang );
+	Serial.print( "Angulo M2: " );
+	Serial.println( xM2Ang );
+	Serial.print( "Angulo M3: " );
+	Serial.println( xM3Ang );
+	Serial.println(  );
+	Serial.println( "-----------------" );
+
+/*
 	if( xAng > 90 || xAng < -85 ){
 	    parar( 30 , 31 );
 	}
 
 
-/*
 	int xRead = analogRead(xPin);
 	delay(1);
 	int xAng = map(xRead, minVal, maxVal, -90, 90);
@@ -204,16 +243,31 @@ void loop() {
 	}
 */
 
-	delay( 5 );
+	delay( 2 );
 }
 
 void parar( int i , int j ){
 	digitalWrite( i , 0 );
 	digitalWrite( j , 0 );
-	delay(100);
+	delay(10);
 }
 
 void parartest( int i ){
 	analogWrite( i , 5e0 );
-	delay(100);
+	delay(10);
+}
+
+void leerAcelerometros(){
+	xM1Read = 0; xM2Read = 0; xM3Read = 0;
+	int limite = 24;
+	for( int i = 0 ; i < limite ; i++ ){
+		// 90    0   -90
+		xM1Read += analogRead(A0);
+		xM2Read += analogRead(A1);
+		xM3Read += analogRead(A2);
+	}
+
+	xM1Ang = map( (int)(xM1Read/limite) , 269, 406, -90, 90 );
+	xM2Ang = map( (int)(xM2Read/limite) , 269, 406, -90, 90 );
+	xM3Ang = map( (int)(xM3Read/limite) , 269, 406, -90, 90 );
 }
